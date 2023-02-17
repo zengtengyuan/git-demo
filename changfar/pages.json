@@ -1,0 +1,103 @@
+{
+	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+		{
+			"path": "pages/index/index",
+			"style": {
+				"navigationBarTitleText": "畅远旅行"
+			}
+		},
+		{
+			"path": "components/RedPack",
+			"style": {
+				"navigationBarTitleText": "畅远旅行"
+			}
+		},
+		{
+			"path": "components/Sub",
+			"style": {
+				"navigationBarTitleText": "畅远旅行"
+			}
+		},
+		{
+			"path": "pages/home/Login",
+			"style": {
+				"navigationBarTitleText": "畅远旅行"
+			}
+		},
+		{
+			"path": "pages/home/home",
+			"style": {
+				"navigationBarTitleText": "畅远旅行"
+			}
+		},
+		{
+			"path": "pages/heart/heart",
+			"style": {
+				"navigationBarTitleText": "畅远旅行"
+			}
+		},
+		{
+			"path": "pages/news/news",
+			"style": {
+				"navigationBarTitleText": "畅远旅行"
+			}
+		},
+		{
+			"path": "pages/order/order",
+			"style": {
+				"navigationBarTitleText": "畅远旅行"
+			}
+		},
+		{
+			"path": "pages/vip/vip",
+			"style": {
+				"navigationBarTitleText": "畅远旅行"
+			}
+		}
+	   
+    ],
+	"tabBar": {
+		"selectedColor": "#39d0bb",
+		"list": [
+			{
+				"iconPath": "static/home.png",
+				"selectedIconPath": "static/home_s.png",
+				"text": "首页",
+				"pagePath": "pages/index/index"
+			},
+			{
+				"iconPath": "static/heart.png",
+				"selectedIconPath": "static/heart_s.png",
+				"text": "看过/收藏",
+				"pagePath": "pages/heart/heart"
+			},
+			{
+			    "iconPath": "static/news.png",
+			    "selectedIconPath": "static/news_s.png",
+			    "text": "消息",
+			    "pagePath": "pages/news/news"
+			   },
+			   {
+			    "iconPath": "static/order.png",
+			    "selectedIconPath": "static/order_s.png",
+			    "text": "订单",
+			    "pagePath": "pages/order/order"
+			   },
+			   {
+			    "iconPath": "static/vip.png",
+			    "selectedIconPath": "static/vip_s.png",
+			    "text": "会员中心",
+			    "pagePath": "pages/vip/vip"
+			   }
+		]
+	},
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "畅远旅行",
+		"navigationBarBackgroundColor": "#39d0bb",
+		"app-plus": {
+			"titleNView":false
+		}
+	},
+	"uniIdRouter": {}
+}

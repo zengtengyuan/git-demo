@@ -1,0 +1,1 @@
+import{a as s,f as a,w as e,i as r,g as t}from"./index.df3ca6f8.js";import{_ as o}from"./_plugin-vue_export-helper.cdc0426e.js";const f=o({},[["render",function(o,f,n,c,d,i){const p=r;return s(),a(p,{class:""},{default:e((()=>[t(" sda ")])),_:1})}]]);export{f as default};
