@@ -98,6 +98,7 @@
 				icon:'none'
 			})
 			if(res.data.status==200){
+				this.$store.commit('LOGIN',res.data)
 				return uni.switchTab({
 					url:'../index/index'
 				})

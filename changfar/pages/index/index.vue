@@ -18,34 +18,60 @@
 				{{item.name}}
 			</view>
 			<view class="text_box">
-				{{item.text}}
+				{{item.content}}
 			</view>
 			<view class="time_box">
 				{{item.time}}
 			</view>
+			<!-- 点赞评论等 -->
+			<view class="bottom_box">
+				<view class="like_box">
+					<img src="../../static/like_s.png" alt="">
+					<span>ponyzeng</span>
+				</view>
+			</view>
 		</view>
 		<view class="comment_box">
-				<img src="../../static/comment.png">
+			<view class="left_box" v-show="isShowLike&index==nowIndex">
+				<view @click="like(item)"
+				 v-show="item.likes"
+				 >
+					<img src="../../static/like.png" alt="" v-show="!item.likes.includes(store.state.phone+'')">
+					<span v-show="!item.likes.includes(store.state.phone)">赞</span>
+				</view>
+				<view @click="like(item)"  
+				 v-show="item.likes">
+					<img src="../../static/like_s.png" v-show="item.likes.includes(store.state.phone)">
+					<span v-show="item.likes.includes(store.state.phone)">取消</span>
+				</view>
+				<view>
+					<img src="../../static/comment_.png" alt="">
+					<span>评论</span>
+				</view>
+			</view>
+			<view class="right_box"  @click="comment(index)">
+				
+				<img src="../../static/comment.png" alt="">
+			</view>
 		</view>
 	</view>
-	
 </template>
 
 <script>
 	import { useStore } from 'vuex'
-	import request from '../../request/api.js'
+	import { ref} from 'vue'
+ 	import request from '../../request/api.js'
 	import { onMounted, reactive ,toRefs} from 'vue'
 	export default {
 		setup(){
+			var isShowLike = ref(false)
+			var nowIndex = ref('')
 			var Data = reactive({
 				ideasData:[]
 			})
-			onMounted(()=>{
-				getData()
-				console.log(ideasData)
-			})
+			
 			let  ideasData
-			const store = useStore()
+			var store = useStore()
 			function toRedPack(){
 				uni.navigateTo({
 					url:'../../components/RedPack'
@@ -64,8 +90,7 @@
 				})
 			}
 			function toGo(){
-				console.log(store.state.name)
-				if(store.state.name!='ponyzeng') 
+				if(!store.state.token) 
 					return uni.showToast(
 					{
 						title:'您还没登录呢',
@@ -79,15 +104,64 @@
 			function toAny(){
 				console.log('去看看别的')
 			}
+			function comment(index){
+				if(index!=nowIndex.value){
+					isShowLike.value = true
+				}else{
+					isShowLike.value = !isShowLike.value
+				}
+				nowIndex.value = index
+			}
+			function like(item){
+				//判断我是否已经点过赞，拿到我的phone
+				if(!store.state.token){
+					return uni.showToast({
+							title:'需要登录才可以进行操作',
+							icon:'none'
+						})
+				}
+				if(!item.likes.includes(store.state.phone)){
+					//已经点赞过，所以现在取消点赞
+					request({
+						url:store.state.baseUrl+'/ideas/like',
+						method:"POST",
+						data:{
+							"phone":store.state.phone,
+							"_id":item._id,
+							"token":store.state.token
+						},
+						headers:{"Content-Type":"application/json"}
+					}).then(res=>{
+						uni.showToast({
+							title:res.data.text,
+							icon:'none'
+						})
+					}).catch(err=>{
+						console.log(err)
+					})
+				}else{
+					//没有点赞呢 所以现在点赞
+				}
+				
+			}
+			store = reactive(store)
 			return {
+				isShowLike,
+				nowIndex,
 				toRedPack,
 				toGo,
 				toAny,
 				getData,
+				comment,
+				like,
+				store,
 				...toRefs(Data)
 				
 			}
-		}
+		},
+		onShow: function() {
+			this.getData()
+		},
 	}
 </script>
 
@@ -147,17 +221,55 @@
 		font-size: 13px;
 		margin-top: 5px;
 	}
-	.dongtai_box .comment_box{
-		background-color: #39d0bb;
-		text-align: center;
-		width: 20px;
-		height: 12px;
+	.dongtai_box .comment_box {
 		display: flex;
+		font-size: 12px;
+		height: 30px;
 		justify-content: center;
 		align-items: center;
-		text-align: center;
+		
 		position: absolute;
 		bottom: 10px;
 		right: 10px;
+	}
+	.dongtai_box .comment_box img{
+		width: 12px;
+		height: 12px;
+		padding: 0 5px;
+	}
+	.dongtai_box .comment_box .left_box{
+		display: flex;
+		color:#fff;
+		justify-content: center;
+		align-items: center;
+		text-align: center;
+		background-color: #373737;
+	}
+	.dongtai_box .comment_box .left_box view{
+		margin:5px;
+		display: flex;
+		justify-content: center;
+		text-align: center;
+		align-items: center;
+	}
+	.dongtai_box .comment_box .right_box{
+		background-color: #ECECEC;
+	}
+	.dongtai_box .bottom_box {
+		background-color: #ECECEC;
+		width:340px;
+		font-size: 12px;
+		margin-top:10px;
+		padding: 5px;
+		display: block;
+	}
+	.dongtai_box .bottom_box .like_box{
+		display: flex;
+		align-items: center;
+	}
+	.dongtai_box .bottom_box .like_box img{
+		width: 15px;
+		margin:0 3px;
+		height: 15px;
 	}
 	</style>

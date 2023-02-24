@@ -24,16 +24,40 @@
 
 <script>
 	import { ref } from 'vue'
+	import request from '../request/api.js'
+	import {useStore} from 'vuex'
+	import changeDate from '../util.js'
 	export default {
 		setup(){
+			const store = useStore()
 			let inputWords = ref('')
 			function toGo(){
+				console.log(changeDate(Date.now()))
 				if(inputWords.value.length==0){
 					return
 				}else{
+				request({
+					url:store.state.baseUrl+'/ideas/put',
+					method:"POST",
+					data:{
+						"content":inputWords.value,
+						"token":store.state.token,
+						"time":changeDate(Date.now()),
+						"timeStamp":Date.now()
+					},
+					headers:{"Content-Type":"application/json"}
+				}).then(res=>{
+					uni.showToast({
+						title:res.data.text,
+						icon:'none'
+					})
 					uni.switchTab({
 						url:'../pages/index/index'
 					})
+				}).catch(e=>{
+					console.log(e)
+				})
+					
 				}
 			}
 			

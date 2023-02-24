@@ -1,10 +1,14 @@
 <script>
+	import { useStore } from 'vuex'
 	export default {
+		setup(){
+			const store = useStore()
+		},
 		onLaunch: function() {
 			console.log('App Launch')
 		},
 		onShow: function() {
-			console.log('App Show')
+			console.log('app_show')
 		},
 		onHide: function() {
 			console.log('App Hide')
