@@ -79,10 +79,15 @@ class IdeasController{
             await client.connect()
             const db = client.db('changfar')
             const ideas = db.collection('ideas')
+            const users = db.collection('users')
+            const _user_result = await users.findOne({phone:ctx.request.body.phone})
             const filter = {_id:ObjectId(ctx.request.body._id)}
             const updateDoc = {
                 $addToSet: {
-                  likes: ctx.request.body.phone
+                  likes: {
+                    phone:ctx.request.body.phone,
+                    name:_user_result.name
+                  }
                 },
               };
               const result = await ideas.updateOne(filter, updateDoc);
@@ -108,7 +113,47 @@ class IdeasController{
             await client.close()
         }
        }
-    
+     //取消点赞
+     async disLike(ctx,next){
+        const client = new MongoClient(url)
+        try{
+            //charge token is right?
+            const token = ctx.request.body.token
+            const res =  jwt.verify(token,jwt_secret)
+            await client.connect()
+            const db = client.db('changfar')
+            const ideas = db.collection('ideas')
+            const filter = {_id:ObjectId(ctx.request.body._id)}
+            const updateDoc = {
+                $pull: {
+                  likes: {
+                    phone:ctx.request.body.phone
+                  }
+                },
+              };
+              const result = await ideas.updateOne(filter, updateDoc);
+              if(result.modifiedCount){
+                return ctx.body = {
+                    code:200,
+                    text:'取消成功'
+                }
+              }else{
+                return ctx.body = {
+                    code:202,
+                    text:'您已经取消过'
+                }
+              }
+        }   catch(e){
+            if(e.name=='JsonWebTokenError'){
+                return ctx.body = {
+                    code:404,
+                    text:"您当前登录环境异常，请刷新重试"
+                }
+            }
+        }   finally{
+            await client.close()
+        }
+       }
             }
            
          
