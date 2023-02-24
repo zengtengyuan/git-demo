@@ -25,24 +25,24 @@
 			</view>
 			<!-- 点赞评论等 -->
 			<view class="bottom_box">
-				<view class="like_box">
-					<img src="../../static/like_s.png" alt="">
-					<span>ponyzeng</span>
+				<view class="like_box" v-for="items in item.likes">
+					<img src="../../static/like_s.png">
+					<span>{{items.name}}</span>
 				</view>
 			</view>
 		</view>
 		<view class="comment_box">
 			<view class="left_box" v-show="isShowLike&index==nowIndex">
-				<view @click="like(item)"
+				<view @click="like(item,index)"
 				 v-show="item.likes"
 				 >
-					<img src="../../static/like.png" alt="" v-show="!item.likes.includes(store.state.phone+'')">
-					<span v-show="!item.likes.includes(store.state.phone)">赞</span>
+					<img src="../../static/like.png" alt="" v-show="!item.likes.includes({phone:store.state.phone})">
+					<span v-show="!item.likes.indexOf({phone:store.state.phone})==-1">赞</span>
 				</view>
-				<view @click="like(item)"  
+				<view @click="like(item,index)"  
 				 v-show="item.likes">
-					<img src="../../static/like_s.png" v-show="item.likes.includes(store.state.phone)">
-					<span v-show="item.likes.includes(store.state.phone)">取消</span>
+					<img src="../../static/like_s.png" v-show="item.likes.includes({phone:store.state.phone})">
+					<span v-show="item.likes.includes({phone:store.state.phone})==-1">取消</span>
 				</view>
 				<view>
 					<img src="../../static/comment_.png" alt="">
@@ -112,7 +112,7 @@
 				}
 				nowIndex.value = index
 			}
-			function like(item){
+			function like(item,index){
 				//判断我是否已经点过赞，拿到我的phone
 				if(!store.state.token){
 					return uni.showToast({
@@ -121,7 +121,8 @@
 						})
 				}
 				if(!item.likes.includes(store.state.phone)){
-					//已经点赞过，所以现在取消点赞
+					//没点赞过，所以现在点赞
+					Data.ideasData[index].likes.push(store.state.phone)
 					request({
 						url:store.state.baseUrl+'/ideas/like',
 						method:"POST",
@@ -141,6 +142,25 @@
 					})
 				}else{
 					//没有点赞呢 所以现在点赞
+					let number = Data.ideasData[index].likes.indexOf(store.state.phone)
+					Data.ideasData[index].likes.splice(number,1)
+					request({
+						url:store.state.baseUrl+'/ideas/disLike',
+						method:"POST",
+						data:{
+							"phone":store.state.phone,
+							"_id":item._id,
+							"token":store.state.token
+						},
+						headers:{"Content-Type":"application/json"}
+					}).then(res=>{
+						uni.showToast({
+							title:res.data.text,
+							icon:'none'
+						})
+					}).catch(err=>{
+						console.log(err)
+					})
 				}
 				
 			}
@@ -257,7 +277,7 @@
 	}
 	.dongtai_box .bottom_box {
 		background-color: #ECECEC;
-		width:340px;
+		width:260px;
 		font-size: 12px;
 		margin-top:10px;
 		padding: 5px;
