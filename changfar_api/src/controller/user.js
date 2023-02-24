@@ -1,4 +1,6 @@
 const { MongoClient } = require('mongodb');
+const jwt = require('jsonwebtoken')
+const jwt_secret = 'ponyzeng'
 const url = 'mongodb://ponyzeng:zty10086@175.24.180.103:27017'; 
 
 
@@ -15,9 +17,17 @@ class UserController{
                 await client.connect()
                 const db = client.db('changfar')
                 const users = db.collection('users')
+                const options = {
+                  projection:{
+                    name:1,
+                    pwd:1,
+                    phone:1,
+                    _id:0
+                  }
+                }
                 const result = await users.findOne({
-                  phone:ctx.request.body.phone*1
-                })
+                  phone:ctx.request.body.phone
+                },options)
                 if(!result){
                     ctx.body = {
                       text:"找不到用户",
@@ -34,7 +44,9 @@ class UserController{
                   ctx.body = {
                     text:"登录成功",
                     status:200,
-                    name:result.name
+                    name:result.name,
+                    phone:result.phone,
+                    token:jwt.sign(result,jwt_secret)
                   }
                   return
                 }
